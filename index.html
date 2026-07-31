@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cyber Security Awareness</title>
+<style>
+  :root{
+    --bg-deep: #0b1220;
+    --bg-panel: #101a2e;
+    --accent: #35d0c3;
+    --accent-2: #6c8cff;
+    --text-main: #eef2fa;
+    --text-dim: #9fb0c9;
+    --danger: #ff6b6b;
+    --card-border: rgba(255,255,255,0.08);
+  }
+
+  *{ box-sizing: border-box; }
+
+  html,body{
+    margin:0;
+    padding:0;
+    height:100%;
+    background: var(--bg-deep);
+    font-family: system-ui, -apple-system, "Segoe UI", Arial, Helvetica, sans-serif;
+    color: var(--text-main);
+    overflow: hidden;
+  }
+
+  .deck{
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .slide{
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 6vh 8vw 10vh;
+    opacity: 0;
+    transform: translateX(40px);
+    transition: opacity 0.45s ease, transform 0.45s ease;
+    pointer-events: none;
+    background:
+      radial-gradient(circle at 15% 15%, rgba(53,208,195,0.08), transparent 40%),
+      radial-gradient(circle at 85% 85%, rgba(108,140,255,0.10), transparent 45%),
+      var(--bg-deep);
+    overflow-y: auto;
+  }
+
+  .slide.active{
+    opacity: 1;
+    transform: translateX(0);
+    pointer-events: auto;
+    z-index: 2;
+  }
+
+  .slide.prev{
+    transform: translateX(-40px);
+  }
+
+  .slide-inner{
+    width: 100%;
+    max-width: 980px;
+    margin: 0 auto;
+  }
+
+  .eyebrow{
+    color: var(--accent);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    font-size: 0.78rem;
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+  }
+
+  h1{
+    font-size: clamp(1.9rem, 4vw, 3rem);
+    line-height: 1.12;
+    margin: 0 0 0.6rem 0;
+    font-weight: 800;
+    letter-spacing: -0.01em;
+  }
+
+  h2{
+    font-size: clamp(1.5rem, 3vw, 2.1rem);
+    margin: 0 0 1rem 0;
+    font-weight: 700;
+  }
+
+  .tagline{
+    color: var(--text-dim);
+    font-size: 1.05rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .lede{
+    font-size: 1.1rem;
+    color: var(--text-main);
+    max-width: 760px;
+    margin-bottom: 1.4rem;
+    line-height: 1.55;
+  }
+
+  ul.bullets{
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+  }
+
+  ul.bullets li{
+    position: relative;
+    padding-left: 1.6rem;
+    font-size: 1.02rem;
+    color: var(--text-main);
+    line-height: 1.5;
+  }
+
+  ul.bullets li::before{
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0.55em;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--accent);
+  }
+
+  .grid{
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+    width: 100%;
+    margin-top: 0.5rem;
+  }
+
+  .grid.three{ grid-template-columns: repeat(3, 1fr); }
+
+  .card{
+    background: var(--bg-panel);
+    border: 1px solid var(--card-border);
+    border-radius: 14px;
+    padding: 1.1rem 1.2rem;
+  }
+
+  .card h3{
+    margin: 0 0 0.5rem 0;
+    font-size: 1.02rem;
+    color: var(--accent);
+    display:flex;
+    align-items:center;
+    gap: 0.5rem;
+  }
+
+  .card p{
+    margin: 0;
+    color: var(--text-dim);
+    font-size: 0.92rem;
+    line-height: 1.5;
+  }
+
+  .icon-badge{
+    font-size: 1.3rem;
+  }
+
+  .badge-strip{
+    display:flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-bottom: 1.2rem;
+  }
+
+  .badge{
+    background: rgba(53,208,195,0.12);
+    color: var(--accent);
+    border: 1px solid rgba(53,208,195,0.3);
+    padding: 0.3rem 0.75rem;
+    border-radius: 999px;
+    font-size: 0.82rem;
+    font-weight: 600;
+  }
+
+  .footer-line{
+    position: absolute;
+    bottom: 4vh;
+    left: 0;
+    right: 0;
+    text-align: center;
+    color: var(--text-dim);
+    font-size: 0.85rem;
+    letter-spacing: 0.02em;
+  }
+
+  .num-tag{
+    position: absolute;
+    top: 4vh;
+    right: 6vw;
+    color: var(--text-dim);
+    font-size: 0.85rem;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Slide 1 - title */
+  .slide-title .slide-inner{
+    text-align: center;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+  }
+  .slide-title .shield{
+    font-size: 3.2rem;
+    margin-bottom: 1rem;
+  }
+  .slide-title h1{
+    font-size: clamp(2.4rem, 6vw, 4rem);
+  }
+
+  /* NOT-TO-DO list styling */
+  .bad-list li::before{
+    background: var(--danger);
+  }
+
+  /* two column layout */
+  .two-col{
+    display:flex;
+    gap: 2rem;
+    width:100%;
+    flex-wrap: wrap;
+  }
+  .two-col > div{
+    flex: 1 1 280px;
+  }
+
+  .cta-item{
+    display:flex;
+    gap: 0.85rem;
+    align-items:flex-start;
+    margin-bottom: 1.1rem;
+  }
+  .cta-num{
+    flex: 0 0 auto;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: rgba(108,140,255,0.15);
+    border: 1px solid rgba(108,140,255,0.4);
+    color: var(--accent-2);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-weight:700;
+    font-size: 0.9rem;
+  }
+  .cta-item p{ margin:0.15rem 0 0 0; color: var(--text-dim); font-size:0.95rem; line-height:1.5;}
+  .cta-item strong{ color: var(--text-main); }
+
+  /* nav */
+  .nav{
+    position: absolute;
+    bottom: 3vh;
+    left: 0;
+    right: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1.5rem;
+    z-index: 10;
+  }
+
+  .nav button{
+    background: var(--bg-panel);
+    border: 1px solid var(--card-border);
+    color: var(--text-main);
+    padding: 0.6rem 1.3rem;
+    border-radius: 999px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    display:flex;
+    align-items:center;
+    gap: 0.4rem;
+    transition: background 0.2s, transform 0.15s, border-color 0.2s;
+  }
+
+  .nav button:hover:not(:disabled){
+    background: rgba(53,208,195,0.14);
+    border-color: rgba(53,208,195,0.4);
+  }
+
+  .nav button:active:not(:disabled){
+    transform: scale(0.96);
+  }
+
+  .nav button:disabled{
+    opacity: 0.35;
+    cursor: not-allowed;
+  }
+
+  .progress{
+    font-size: 0.85rem;
+    color: var(--text-dim);
+    min-width: 60px;
+    text-align: center;
+  }
+
+  .dots{
+    position: absolute;
+    top: 3vh;
+    left: 50%;
+    transform: translateX(-50%);
+    display:flex;
+    gap: 6px;
+    z-index: 10;
+  }
+  .dot{
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.18);
+    transition: background 0.25s, width 0.25s;
+  }
+  .dot.active{
+    background: var(--accent);
+    width: 18px;
+    border-radius: 4px;
+  }
+
+  @media (max-width: 720px){
+    .grid, .grid.three{ grid-template-columns: 1fr; }
+    .two-col{ flex-direction: column; }
+    .slide{ padding: 8vh 6vw 14vh; }
+    h1{ font-size: 1.7rem; }
+    h2{ font-size: 1.3rem; }
+    .num-tag{ top: 2vh; }
+    .dots{ top: 1.5vh; }
+  }
+</style>
+</head>
+<body>
+
+<div class="deck" id="deck">
+
+  <!-- Slide 1 -->
+  <section class="slide slide-title">
+    <span class="num-tag">01 / 16</span>
+    <div class="slide-inner">
+      <div class="shield">🛡️</div>
+      <h1>Cyber Security Awareness</h1>
+      <p class="tagline">Cyber security is a joint responsibility for everyone</p>
+    </div>
+  </section>
+
+  <!-- Slide 2 -->
+  <section class="slide">
+    <span class="num-tag">02 / 16</span>
+    <div class="slide-inner">
+      <div class="eyebrow">The basics</div>
+      <h1>What is Cybersecurity?</h1>
+      <p class="lede">The practice of protecting systems, networks, data, and devices from digital and physical attacks.</p>
+      <h2 style="font-size:1.1rem; color:var(--text-dim); font-weight:600;">Purpose</h2>
+      <ul class="bullets">
+        <li>Safeguard sensitive information</li>
+        <li>Ensure business continuity</li>
+        <li>Maintain trust and compliance</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- Slide 3 -->
+  <section class="slide">
+    <span class="num-tag">03 / 16</span>
+    <div class="slide-inner">
+      <div class="eyebrow">The basics</div>
+      <h1>Key Goals of Cyber Security</h1>
+      <div class="grid three">
+        <div class="card">
+          <h3><span class="icon-badge">🔒</span> Confidentiality</h3>
+          <p>Protect sensitive information from unauthorized access.</p>
+        </div>
+        <div class="card">
+          <h3><span class="icon-badge">✅</span> Integrity</h3>
+          <p>Ensure data remains accurate and consistent throughout its lifecycle — free from unauthorized modification.</p>
+        </div>
+        <div class="card">
+          <h3><span class="icon-badge">⚡</span> Availability</h3>
+          <p>Keep systems and data accessible when needed, resilient to denial-of-service (DoS) attacks.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 4 -->
+  <section class="slide">
+    <span class="num-tag">04 / 16</span>
+    <div class="slide-inner">
+      <div class="eyebrow">Payroll system</div>
+      <h1>Security Measures</h1>
+      <div class="grid three">
+        <div class="card">
+          <h3><span class="icon-badge">🔒</span> Technical</h3>
+          <p>Strong passwords &amp; multi-factor authentication · Data encryption · Regular system updates &amp; patches · Firewalls &amp; antivirus software</p>
+        </div>
+        <div class="card">
+          <h3><span class="icon-badge">👥</span> Human</h3>
+          <p>Cybersecurity awareness training · Limit access to payroll data · Report suspicious activity</p>
+        </div>
+        <div class="card">
+          <h3><span class="icon-badge">📋</span> Process</h3>
+          <p>Regular system audits &amp; monitoring · Backup &amp; recovery plans · Clear data access policies</p>
+        </div>
+      </div>
+      <p class="lede" style="margin-top:1.3rem; color:var(--text-dim); font-size:0.98rem;">Together, these measures create a secure and resilient payroll system.</p>
+    </div>
+  </section>
+
+  <!-- Slide 5 -->
+  <section class="slide">
+    <span class="num-tag">05 / 16</span>
+    <div class="slide-inner">
+      <div class="eyebrow">Threat landscape</div>
+      <h1>Cyber Crimes</h1>
+      <p class="lede">Illegal activities carried out using computers or networks.</p>
+      <div class="two-col">
+        <div>
+          <h2 style="font-size:1.05rem; color:var(--text-dim); font-weight:600;">Examples</h2>
+          <ul class="bullets">
+            <li>Identity theft</li>
+            <li>Financial fraud</li>
+            <li>Data breaches</li>
+            <li>Cyber espionage</li>
+          </ul>
+        </div>
+        <div>
+          <h2 style="font-size:1.05rem; color:var(--text-dim); font-weight:600;">Impact</h2>
+          <p style="color:var(--text-main); line-height:1.5;">Loss of money, data, and trust.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 6 -->
+  <section class="slide">
+    <span class="num-tag">06 / 16</span>
+    <div class="slide-inner">
+      <div class="eyebrow">Types of cyber attacks</div>
+      <h1>Phishing &amp; Spear-Phishing</h1>
+      <div class="grid">
+        <div class="card">
+          <h3><span class="icon-badge">🎣</span> Phishing</h3>
+          <p>Criminals send fake emails, SMS messages, or links pretending to be a real company or person, tricking you into clicking, sharing information, or downloading something harmful.</p>
+        </div>
+        <div class="card">
+          <h3><span class="icon-badge">🎯</span> Spear-Phishing &amp; Smishing</h3>
+          <p>A more targeted version of phishing — the attacker personalizes the message using information about you specifically.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 7 -->
+  <section class="slide">
+    <span class="num-tag">07 / 16</span>
+    <div class="slide-inner">
+      <div class="eyebrow">Types of cyber attacks</div>
+      <h1>Social Engineering &amp; Malware</h1>
+      <div class="grid">
+        <div class="card">
+          <h3><span class="icon-badge">🧠</span> Social Engineering</h3>
+          <p>Criminals manipulate or trick people into giving away information or doing something unsafe — using psychology instead of hacking computers.</p>
+        </div>
+        <div class="card">
+          <h3><span class="icon-badge">🦠</span> Malware &amp; Ransomware</h3>
+          <p>Malware is harmful software that sneaks in when you click bad links or download unsafe files. Ransomware locks your files and demands payment to unlock them.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 8 -->
+  <section class="slide">
+    <span class="num-tag">08 / 16</span>
+    <div class="slide-inner">
+      <div class="eyebrow">Types of cyber attacks (cont.)</div>
+      <h1>Fake Websites &amp; Social Scams</h1>
+      <div class="grid">
+        <div class="card">
+          <h3><span class="icon-badge">🌐</span> Fake Websites &amp; Password Theft</h3>
+          <p>Attackers create fake websites that look real (e.g. fake social media login pages). When you enter your username and password, they steal it.</p>
+        </div>
+        <div class="card">
+          <h3><span class="icon-badge">📱</span> Social Media &amp; Mobile Money Scams</h3>
+          <p>Scams that happen on Facebook, WhatsApp, TikTok, Instagram, or through mobile money platforms like EcoCash or OneMoney.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 9 -->
+  <section class="slide">
+    <span class="num-tag">09 / 16</span>
+    <div class="slide-inner">
+      <div class="eyebrow">Stay alert</div>
+      <h1>Red Flags to Detect Threats</h1>
+      <div class="grid">
+        <div class="card"><h3>⚠️ Urgent or threatening language</h3><p>Pressure to act immediately is a classic manipulation tactic.</p></div>
+        <div class="card"><h3>✉️ Unexpected attachments or links</h3><p>Unsolicited files or links from unknown senders.</p></div>
+        <div class="card"><h3>🔤 Spelling &amp; grammar errors</h3><p>Official communications are rarely sloppy.</p></div>
+        <div class="card"><h3>❓ Requests for sensitive info</h3><p>Legitimate organizations rarely ask for passwords via email.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 10 -->
+  <section class="slide">
+    <span class="num-tag">10 / 16</span>
+    <div class="slide-inner">
+      <div class="eyebrow">Defense</div>
+      <h1>How We Can Protect Ourselves</h1>
+      <div class="grid">
+        <div class="card">
+          <h3><span class="icon-badge">🔑</span> Turn On Two-Factor Authentication</h3>
+          <p>Even if someone steals your password, they can't get in without the second code.</p>
+        </div>
+        <div class="card">
+          <h3><span class="icon-badge">🖱️</span> Avoid Unknown Apps or Downloads</h3>
+          <p>Only install apps from official stores. Don't open suspicious attachments.</p>
+        </div>
+        <div class="card">
+          <h3><span class="icon-badge">🪪</span> Stay Alert on Social Media</h3>
+          <p>Scammers create fake profiles or pretend to be friends. If it feels off — don't trust it.</p>
+        </div>
+        <div class="card">
+          <h3><span class="icon-badge">🔐</span> Use Strong, Unique Passwords</h3>
+          <p>Avoid simple passwords. Use different passwords for different accounts.</p>
+        </div>
+        <div class="card" style="grid-column: 1 / -1;">
+          <h3><span class="icon-badge">🏦</span> Check Websites Before Entering Passwords</h3>
+          <p>Look for correct spelling, "https://", and avoid strange or unfamiliar URLs.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 11 -->
+  <section class="slide">
+    <span class="num-tag">11 / 16</span>
+    <div class="slide-inner">
+      <div class="eyebrow">Passwords</div>
+      <h1>Why Password Security Matters</h1>
+      <p class="lede">Passwords are the #1 target in cyberattacks — over 80% of breaches involve compromised credentials. Weak or reused passwords expose company data, customer information, and systems.</p>
+      <h2 style="font-size:1.05rem; color:var(--text-dim); font-weight:600;">Good Password Practices</h2>
+      <ul class="bullets">
+        <li>Use strong, unique, long passwords — e.g. three random words like "DeskAppleDoor" strengthened to "D3skApp!eDOor3"</li>
+        <li>Enable Multi-Factor Authentication (MFA)</li>
+        <li>Use a password manager</li>
+        <li>Avoid names, birthdays, or reusing passwords</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- Slide 12 -->
+  <section class="slide">
+    <span class="num-tag">12 / 16</span>
+    <div class="slide-inner">
+      <div class="eyebrow">Avoid these habits</div>
+      <h1>What NOT to Do <span style="color:var(--danger);">(Bad Password Practices)</span></h1>
+      <ul class="bullets bad-list">
+        <li>Using weak passwords (name, date of birth, department, "12345", etc.)</li>
+        <li>Writing passwords on calendars, notebooks, or sticky notes</li>
+        <li>Sharing passwords with colleagues</li>
+        <li>Reusing passwords across multiple accounts</li>
+        <li>Leaving phones, laptops, and tablets without lock passwords</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- Slide 13 -->
+  <section class="slide">
+    <span class="num-tag">13 / 16</span>
+    <div class="slide-inner">
+      <div class="eyebrow">Physical security</div>
+      <h1>Leaving the Machine On and Unattended</h1>
+      <p class="lede" style="font-size:1rem;">Risks of leaving your device on and unattended:</p>
+      <div class="grid three">
+        <div class="card"><h3><span class="icon-badge">🔓</span> Unauthorized Access</h3><p>Someone can physically access the machine and retrieve or modify data.</p></div>
+        <div class="card"><h3><span class="icon-badge">📂</span> Data Leakage</h3><p>If files or systems are open, sensitive information can be copied or viewed.</p></div>
+        <div class="card"><h3><span class="icon-badge">🦠</span> Installation of Malware</h3><p>An attacker can plug in a USB or access the internet to install malicious software.</p></div>
+        <div class="card"><h3><span class="icon-badge">🔑</span> Bypassing Authentication</h3><p>If the machine is not locked, attackers can bypass login controls entirely.</p></div>
+        <div class="card"><h3><span class="icon-badge">⚡</span> Resource Drain</h3><p>Leaves systems vulnerable to remote exploits and consumes power/resources unnecessarily.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 14 -->
+  <section class="slide">
+    <span class="num-tag">14 / 16</span>
+    <div class="slide-inner">
+      <div class="eyebrow">Physical security</div>
+      <h1>Best Practices</h1>
+      <p class="lede" style="font-size:1rem;">When leaving your machine, always follow these practices:</p>
+      <div class="grid">
+        <div class="card"><h3><span class="icon-badge">🖥️</span> Lock Your Screen</h3><p>Press Win + L when stepping away. Enable auto-lock after a period of inactivity.</p></div>
+        <div class="card"><h3><span class="icon-badge">⏻</span> Log Out or Shut Down</h3><p>Always log out or shut down your system when it is not in use.</p></div>
+        <div class="card"><h3><span class="icon-badge">🔌</span> Restrict USB &amp; Physical Ports</h3><p>Block or restrict USB access and physical ports to prevent unauthorised device connections.</p></div>
+        <div class="card"><h3><span class="icon-badge">🚫</span> Never Leave It Unlocked</h3><p>An unattended, unlocked machine is a risk — physically and digitally. Always lock or shut it down.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 15 -->
+  <section class="slide">
+    <span class="num-tag">15 / 16</span>
+    <div class="slide-inner">
+      <div class="eyebrow">Take action</div>
+      <h1>Call to Action</h1>
+      <div class="cta-item">
+        <div class="cta-num">1</div>
+        <div><strong>Be Role Models</strong><p>Practice secure behavior — the organization follows your lead.</p></div>
+      </div>
+      <div class="cta-item">
+        <div class="cta-num">2</div>
+        <div><strong>Take Cyber Risks Seriously</strong><p>Treat cyber threats as core business risks, not just IT issues, as they affect the whole organization.</p></div>
+      </div>
+      <div class="cta-item">
+        <div class="cta-num">3</div>
+        <div><strong>Verify Everything</strong><p>Double-check unusual requests and emails, and verify AI-generated information using trusted channels.</p></div>
+      </div>
+      <div class="cta-item">
+        <div class="cta-num">4</div>
+        <div><strong>Report Quickly</strong><p>Encourage immediate reporting of anything suspicious — no blame, just action.</p></div>
+      </div>
+      <div class="cta-item">
+        <div class="cta-num">5</div>
+        <div><strong>Keep Learning</strong><p>Stay updated through workshops and training; threats evolve daily.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 16 -->
+  <section class="slide slide-title">
+    <span class="num-tag">16 / 16</span>
+    <div class="slide-inner">
+      <div class="shield">🙏</div>
+      <h1>Thank You</h1>
+      <p class="tagline" style="color: var(--danger); font-weight:700;">Don't be the weakest link!</p>
+      <p class="tagline">Be Smart. Be Safe. Be Cyber-Aware.</p>
+    </div>
+  </section>
+
+  <div class="dots" id="dots"></div>
+  <div class="footer-line" id="footerLine">Be Smart. Be Safe. Be Cyber-Aware.</div>
+
+  <div class="nav">
+    <button id="prevBtn" aria-label="Previous slide">&#8592; Previous</button>
+    <span class="progress" id="progress">1 / 16</span>
+    <button id="nextBtn" aria-label="Next slide">Next &#8594;</button>
+  </div>
+
+</div>
+
+<script>
+(function(){
+  var slides = document.querySelectorAll('.slide');
+  var total = slides.length;
+  var current = 0;
+
+  var prevBtn = document.getElementById('prevBtn');
+  var nextBtn = document.getElementById('nextBtn');
+  var progress = document.getElementById('progress');
+  var dotsContainer = document.getElementById('dots');
+
+  // build dots
+  for (var i = 0; i < total; i++) {
+    var dot = document.createElement('div');
+    dot.className = 'dot' + (i === 0 ? ' active' : '');
+    dot.dataset.index = i;
+    dot.addEventListener('click', (function(idx){
+      return function(){ goTo(idx); };
+    })(i));
+    dotsContainer.appendChild(dot);
+  }
+  var dots = dotsContainer.querySelectorAll('.dot');
+
+  function render(){
+    slides.forEach(function(slide, idx){
+      slide.classList.remove('active', 'prev');
+      if (idx === current) {
+        slide.classList.add('active');
+      } else if (idx < current) {
+        slide.classList.add('prev');
+      }
+    });
+    dots.forEach(function(d, idx){
+      d.classList.toggle('active', idx === current);
+    });
+    progress.textContent = (current + 1) + ' / ' + total;
+    prevBtn.disabled = current === 0;
+    nextBtn.disabled = current === total - 1;
+  }
+
+  function goTo(idx){
+    if (idx < 0 || idx >= total) return;
+    current = idx;
+    render();
+  }
+
+  function next(){ goTo(current + 1); }
+  function prev(){ goTo(current - 1); }
+
+  prevBtn.addEventListener('click', prev);
+  nextBtn.addEventListener('click', next);
+
+  document.addEventListener('keydown', function(e){
+    if (e.key === 'ArrowRight' || e.key === 'PageDown') { next(); }
+    else if (e.key === 'ArrowLeft' || e.key === 'PageUp') { prev(); }
+  });
+
+  // basic touch swipe support
+  var touchStartX = null;
+  document.addEventListener('touchstart', function(e){
+    touchStartX = e.changedTouches[0].screenX;
+  }, {passive: true});
+  document.addEventListener('touchend', function(e){
+    if (touchStartX === null) return;
+    var dx = e.changedTouches[0].screenX - touchStartX;
+    if (Math.abs(dx) > 50) {
+      if (dx < 0) next(); else prev();
+    }
+    touchStartX = null;
+  }, {passive: true});
+
+  render();
+})();
+</script>
+
+</body>
+</html>
